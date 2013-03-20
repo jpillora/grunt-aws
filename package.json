@@ -43,6 +43,8 @@
     "gruntplugin"
   ],
   "dependencies": {
-    "require-dir": "~0.1.0"
+    "require-dir": "~0.1.0",
+    "lodash": "~1.0.1",
+    "async": "~0.2.6"
   }
 }

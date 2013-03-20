@@ -23,7 +23,7 @@ module.exports = (grunt) ->
     
     # Configuration to be run (and then tested).
     aws:
-      default_options:
+      deployFiles:
         options: {}
         files:
           "tmp/default_options": ["test/fixtures/testing", "test/fixtures/123"]

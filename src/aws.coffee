@@ -9,48 +9,68 @@
 glob = require("glob-manifest")
 fs = require("fs")
 path = require("path")
+_ = require("lodash")
 requiredir = require("require-dir")
+AWS = require "aws-sdk"
 
 # Retrieve Subtasks
-subtasks = requiredir("./subtasks")
-# ( ->
-#   tasks = {}
-#   dirName = 'subtasks'
-#   dir = path.resolve __dirname, dirName
-#   fs.readdirSync(dir)?.forEach (f) ->
-#     name = f.replace /\.js$/, ''
-#     path = "." + path.sep + dirName + path.sep + name
-#     tasks[name] = require(path)
-#   tasks
-# )()
-
-console.log subtasks
+services = requiredir("./services")
 
 # Define AWS Master Task
 class AWSTask
 
   defaults:
-    punctuation: "."
-    separator: ", "
+    baz: 5
 
   constructor: (@grunt, @task) ->
+
     @name = @task.target
-    @opts = @task.options @defaults
+    #required fields
+    @grunt.config.requires ['aws', @name, 'service']
+    @grunt.config.requires ['aws', @name, 'files', 'src']
+    @grunt.config.requires ['aws', @name, 'files', 'dest']
+    @grunt.config.requires ['aws', 'options', 'config', 'accessKeyId']
+    @grunt.config.requires ['aws', 'options', 'config', 'secretAccessKey']
+    @grunt.config.requires ['aws', 'options', 'config', 'region']
+
     @data = @task.data
+    @service = @task.data.service
+    @opts = @task.options()
     @done = @task.async()
+    @config()
 
-    @run()
+  config: ->
 
-  run: ->
+    AWS.config.update @opts.config
 
-    console.log "running"
-    console.log @task
+    @startService()
 
-    glob @data.files, (err, files) ->
-      throw err  if err
-      console.log files
+  startService: ->
 
-    @done()
+
+    Service = services[@service] 
+
+    #existance check
+    unless Service
+      @grunt.fail.fatal "Sorry the '#{@service}' service does not exist yet. Please contribute!"
+
+    #build options
+    
+    serviceOpts = @opts?.services?[@service]
+    if serviceOpts
+      delete @opts.services[@service]
+      @opts = _.extend(
+        {}, 
+        @defaults,                        #hardcoded plugin defaults
+        Service.prototype.defaults or {}, #hardcoded service defaults
+        serviceOpts,  #user options (options -> service section)
+        @opts         #user options (task(with service == service) -> options section)
+      )
+
+    #run !
+    @grunt.log.writeln "Running service: #{@service}..."
+    new Service @grunt, @opts, @data, @done
+    null
 
 module.exports = (grunt) ->
   grunt.registerMultiTask "aws", "A Grunt interface into the Amazon Node.JS SDK", ->
