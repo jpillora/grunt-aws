@@ -45,6 +45,7 @@
   "dependencies": {
     "require-dir": "~0.1.0",
     "lodash": "~1.0.1",
-    "async": "~0.2.6"
+    "async": "~0.2.6",
+    "mime": "~1.2.9"
   }
 }

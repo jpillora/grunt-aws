@@ -27,11 +27,8 @@ class AWSTask
     @name = @task.target
     #required fields
     @grunt.config.requires ['aws', @name, 'service']
-    @grunt.config.requires ['aws', @name, 'files', 'src']
-    @grunt.config.requires ['aws', @name, 'files', 'dest']
     @grunt.config.requires ['aws', 'options', 'config', 'accessKeyId']
     @grunt.config.requires ['aws', 'options', 'config', 'secretAccessKey']
-    @grunt.config.requires ['aws', 'options', 'config', 'region']
 
     @data = @task.data
     @service = @task.data.service
@@ -40,32 +37,29 @@ class AWSTask
     @config()
 
   config: ->
-
     AWS.config.update @opts.config
-
     @startService()
 
   startService: ->
-
-
     Service = services[@service] 
 
     #existance check
     unless Service
       @grunt.fail.fatal "Sorry the '#{@service}' service does not exist yet. Please contribute!"
 
+    #extract per-service opts
+    if @opts[@service]
+      serviceOpts = @opts[@service]
+      delete @opts[@service]
+
     #build options
-    
-    serviceOpts = @opts?.services?[@service]
-    if serviceOpts
-      delete @opts.services[@service]
-      @opts = _.extend(
-        {}, 
-        @defaults,                        #hardcoded plugin defaults
-        Service.prototype.defaults or {}, #hardcoded service defaults
-        serviceOpts,  #user options (options -> service section)
-        @opts         #user options (task(with service == service) -> options section)
-      )
+    @opts = _.extend(
+      {}, 
+      @defaults,                        #hardcoded plugin defaults
+      Service.prototype.defaults or {}, #hardcoded service defaults
+      serviceOpts or {},  #user options (options -> service section)
+      @opts         #user options (task(with service == service) -> options section)
+    )
 
     #run !
     @grunt.log.writeln "Running service: #{@service}..."

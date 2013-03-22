@@ -1,5 +1,7 @@
 # grunt-aws
 
+# *This plugin is currently in progress*
+
 > A Grunt interface into the Amazon Node.JS SDK
 
 ## Getting Started
