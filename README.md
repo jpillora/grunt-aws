@@ -1,8 +1,6 @@
 # grunt-aws
 
-# *This plugin is currently in progress*
-
-> A Grunt interface into the Amazon Node.JS SDK
+> A Grunt interface into the Amazon Web Services Node.JS SDK
 
 ## Getting Started
 This plugin requires Grunt `~0.4.0`
@@ -21,71 +19,113 @@ grunt.loadNpmTasks('grunt-aws');
 
 ## The "aws" task
 
-### Overview
-In your project's Gruntfile, add a section named `aws` to the data object passed into `grunt.initConfig()`.
+### Quick Usage
 
 ```js
 grunt.initConfig({
   aws: {
     options: {
-      // Task-specific options go here.
+      config:{
+        accessKeyId: '...',
+        secretAccessKey: '...'
+      },
+      s3: {
+        options: {
+          root: 'build/'
+          bucket: '...'
+          access: 'public-read'
+        }
+      }
     },
-    your_target: {
-      // Target-specific file lists and/or options go here.
-    },
-  },
-})
+    deploy: {
+      service: 's3'
+      put: ['build/**/*.*']
+    }
+  }
+});
 ```
 
 ### Options
 
-#### options.separator
+#### options.config
+Type: `Object`
+Default: `{}`
+
+#### options.config.accessKeyId (required)
 Type: `String`
-Default value: `',  '`
 
-A string value that is used to do something with whatever.
+Amazon access key id
 
-#### options.punctuation
+#### options.config.secretAccessKey (required)
 Type: `String`
-Default value: `'.'`
 
-A string value that is used to do something else with whatever else.
+Amazon secret access key
 
-### Usage Examples
+#### options.s3
+Type: `Object`
+Default: `{}`
 
-#### Default Options
-In this example, the default options are used to do something with whatever. So if the `testing` file has the content `Testing` and the `123` file had the content `1 2 3`, the generated result would be `Testing, 1 2 3.`
+S3 specifc options
 
-```js
-grunt.initConfig({
-  aws: {
-    options: {},
-    files: {
-      'dest/default_options': ['src/testing', 'src/123'],
-    },
-  },
-})
-```
+#### options.s3.root
+Type: `String`
+Default: `'./'`
 
-#### Custom Options
-In this example, custom options are used to do something else with whatever else. So if the `testing` file has the content `Testing` and the `123` file had the content `1 2 3`, the generated result in this case would be `Testing: 1 2 3 !!!`
+Local directory to use as S3 root
+
+#### options.s3.bucket (required)
+Type: `String`
+
+Name of S3 bucket
+
+#### options.s3.access
+Type: `String`
+Default: `'public-read'`
+
+
+### Target API
+
+#### `target`.put
+Type: `Array` | `String`
+Default: `[]`
+
+A single glob or an array of globs
+
+
+#### `target`.del
+Type: `Array` | `String`
+Default: `[]`
+
+A single glob or an array of globs
+
+### Target specifc Options
+
+Each target may override the options specified. The following example is equivalent to the "Quick Usage" example above.
+
 
 ```js
 grunt.initConfig({
   aws: {
     options: {
-      separator: ': ',
-      punctuation: ' !!!',
+      config:{
+        accessKeyId: '...',
+        secretAccessKey: '...'
+      },
+      s3: {
+        //nothing here
+      }
     },
-    files: {
-      'dest/default_options': ['src/testing', 'src/123'],
-    },
-  },
-})
+    deploy: {
+      service: 's3',
+      // these options will override 'service' options (so s3 options in this case)
+      options: {
+        root: 'build/'
+        bucket: '...'
+        access: 'public-read'
+      }
+      put: ['build/**/*.*']
+    }
+  }
+});
 ```
 
-## Contributing
-In lieu of a formal styleguide, take care to maintain the existing coding style. Add unit tests for any new or changed functionality. Lint and test your code using [Grunt](http://gruntjs.com/).
-
-## Release History
-_(Nothing yet)_
