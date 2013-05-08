@@ -26,7 +26,6 @@ S3Service = (function(_super) {
   S3Service.prototype.name = 's3';
 
   S3Service.prototype.defaults = {
-    root: './',
     access: 'public-access',
     endpoint: 's3-ap-southeast-2.amazonaws.com',
     concurrent: 20
@@ -41,6 +40,7 @@ S3Service = (function(_super) {
     this.data = data;
     this.done = done;
     _.bindAll(this);
+    this.debug = this.grunt.option('aws') === 'debug';
     config = _.pick(this.opts, 'endpoint');
     this.s3 = new AWS.S3(config).client;
     this.stats = {
@@ -105,7 +105,7 @@ S3Service = (function(_super) {
     var _this = this;
 
     return fs.readFile(file, function(err, buffer) {
-      var key, object;
+      var key, object, putSuccess;
 
       key = _this.calcKey(file);
       if (!key) {
@@ -118,27 +118,27 @@ S3Service = (function(_super) {
         Key: key,
         ContentType: _this.opts.contentType || mime.lookup(file)
       };
-      return _this.s3.putObject(object, function(err, data) {
+      putSuccess = function(err, data) {
         if (err) {
           return callback(err);
         }
-        _this.grunt.log.ok("Put: " + key);
+        _this.grunt.log.ok("" + (_this.debug ? 'DEBUG ' : '') + "Put: " + key);
         _this.stats.puts++;
         return callback();
-      });
+      };
+      if (_this.debug) {
+        return putSuccess(null, {});
+      } else {
+        return _this.s3.putObject(object, putSuccess);
+      }
     });
   };
 
   S3Service.prototype.calcKey = function(file) {
-    if (!this.opts.root) {
+    if (!this.opts.fileFilter) {
       return file;
     }
-    if (file.indexOf(this.opts.root) === 0) {
-      return file.replace(this.opts.root, '');
-    } else {
-      this.grunt.log.writeln("Skipping: " + file + " (not in root)");
-      return null;
-    }
+    return this.opts.fileFilter(file);
   };
 
   S3Service.prototype.complete = function(err) {

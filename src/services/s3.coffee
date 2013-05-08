@@ -20,13 +20,14 @@ class S3Service extends BaseService
   name: 's3'
 
   defaults:
-    root: './'
     access: 'public-access'
     endpoint: 's3-ap-southeast-2.amazonaws.com'
     concurrent: 20
 
   constructor: (@grunt, @opts, @data, @done) ->
     _.bindAll @
+
+    @debug = @grunt.option('aws') is 'debug'
 
     #client config
     config = _.pick @opts, 'endpoint'
@@ -36,7 +37,7 @@ class S3Service extends BaseService
     @stats = {puts: 0, dels: 0}
 
     @data.put = [] unless @data.put
-    @data.del = [] unless @data.del 
+    @data.del = [] unless @data.del
 
     async.series [
       (cb) => @runGlob @data.del, @deleteObject, cb
@@ -73,7 +74,7 @@ class S3Service extends BaseService
 
       @s3.deleteObject object, (err, data) =>
         return callback(err) if err
-        
+
         @grunt.log.ok "Deleted: #{key}"
         @stats.dels++
         callback()
@@ -96,22 +97,21 @@ class S3Service extends BaseService
         ContentType: @opts.contentType || mime.lookup file
       }
 
-      @s3.putObject object, (err, data) =>
+      putSuccess = (err, data) =>
         return callback(err) if err
-        
-        @grunt.log.ok "Put: #{key}"
+        @grunt.log.ok "#{if @debug then 'DEBUG ' else ''}Put: #{key}"
         @stats.puts++
         callback()
 
+      if @debug
+        putSuccess null, {}
+      else
+        @s3.putObject object, putSuccess
+
 
   calcKey: (file) ->
-    return file unless @opts.root
-    #skip objects not in root
-    if file.indexOf(@opts.root) is 0
-      return file.replace @opts.root, ''
-    else
-      @grunt.log.writeln "Skipping: #{file} (not in root)"
-      return null
+    return file unless @opts.fileFilter
+    return @opts.fileFilter file
 
   complete: (err) ->
     if err
