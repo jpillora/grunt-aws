@@ -1,0 +1,32 @@
+{
+  "files": {
+    "bar/bazz.js": "d2ba11f06cc309d2f29c62b0fecabd72",
+    "dev/apm/apm.css": "da4477c83dbca86f38b7525d5e9ba3b2",
+    "dev/apm/apm.html": "918173da16500824ab33bca14583b430",
+    "dev/apm/apm.js": "63fbacdc06f7c7eb0a66f040204e5f72",
+    "dev/public/img/glyphicons-halflings-white.png": "9bbc6e9602998a385c2ea13df56470fd",
+    "dev/public/img/glyphicons-halflings.png": "2516339970d710819585f90773aebe0a",
+    "dev/public/json/applicationCourses.json": "c6532ba923ea6b6f69afc41cb732b010",
+    "dev/public/json/applicationFormData.json": "2626b8024c61e0bc1ec49538ded2c2a0",
+    "dev/public/json/applicationFormValidations.json": "65a07a9eb225890d63184e6b7e2586f3",
+    "dev/public/json/samples/apm-sample.json": "ce29b9512892e73d69fe3ab79716b718",
+    "dev/public/json/studentInfo.json": "3425c204be51d70f4231f3ed72131991",
+    "dev/public/vendor/bootstrap-responsive.css": "871defe8c1a928bcbcc3efcf4a1dde42",
+    "dev/public/vendor/bootstrap-responsive.min.css": "f889adb0886162aa4ceab5ff6338d888",
+    "dev/public/vendor/bootstrap.css": "a503680494d9927b35e02b5759730e9f",
+    "dev/public/vendor/bootstrap.min.css": "4082271c7f87b09c7701ffe554e61edd",
+    "dev/public/vendor/modernizr.oa.js": "6b484556c9887d40cd9a6cba07284bbc",
+    "dev/public/vendor/notify.js": "bcc92ccd24cfeed9eeb17bbb767a86a2",
+    "dev/public/vendor/notify.min.js": "395d1677818e0ae85dae1456ea169791",
+    "dev/public/vendor/select2.css": "56b1b4b8cd3b6b9d5d14795802e47fe6",
+    "dev/public/vendor/select2.js": "7a2775cc06217cca526427b53b4be6af",
+    "dev/public/vendor/select2.png": "2ca61b76e22053571dd8611e5aac4900",
+    "dev/public/vendor/select2x2.png": "49e3f006018662f60f1db2aec0b2cca9",
+    "dev/public/vendor/verify.js": "5bccd1d674964bae3cb4630f6356d91e",
+    "dev/public/vendor/verify.min.js": "824d2b0f17111dc96ac1b28bd8c5a80a",
+    "foo.js": "75c80bbb9f1fd353e1cac0cf06209aec",
+    "tweet.png": "0a2d6d90fb3d63a6e96be7f04166a71c",
+    "uglify.min.js": "fbd69cf1b2dda2183a8b446456f07a89"
+  },
+  "refreshedAt": 1377524759943
+}
