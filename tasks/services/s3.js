@@ -23,7 +23,8 @@ module.exports = function(grunt) {
     // deleteFirst: true,
     // deleteMatched: true,
     dryRun: false,
-    gzip: true
+    gzip: true,
+    cache: true
   };
 
   //s3 task
@@ -68,6 +69,13 @@ module.exports = function(grunt) {
     //retrieve cache for this bucket
     var cache = CacheMgr.get(opts.bucket);
 
+    if(!cache.options)
+      cache.options = {};
+    if(!cache.prefixes)
+      cache.prefixes = {};
+    if(!cache.files)
+      cache.files = {};
+
     //base object (lacks Body and Key)
     var baseObject = {
       ACL: opts.access,
@@ -100,10 +108,6 @@ module.exports = function(grunt) {
     //use meta data headers
     if(typeof opts.meta === 'object')
       baseObject.Metadata = opts.meta;
-
-    //set of options used
-    if(!cache.options)
-      cache.options = {};
 
     //calculate options hash
     var optionsHash = hash(JSON.stringify(baseObject), 'sha256');
@@ -141,10 +145,6 @@ module.exports = function(grunt) {
       });
       prefix = prefix.substr(0, pindex);
 
-      //check the cache for this prefix
-      if(!cache.prefixes)
-        cache.prefixes = {};
-
       //get prefix's earliest refresh time
       var refreshedAt = 0;
       for(var p in cache.prefixes)
@@ -159,9 +159,6 @@ module.exports = function(grunt) {
         grunt.verbose.writeln("Using cached object list prefixed with '" + prefix + "'");
         return callback();
       }
-
-      if(!cache.files)
-        cache.files = {};
 
       //fetch all objects, beginning with key ''
       fetchObjects('');

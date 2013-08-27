@@ -147,6 +147,35 @@ Set **custom** HTTP headers
 All custom headers will be prefixed with `x-amz-meta-`.
 For example `{Foo:"42"}` becomes `x-amz-meta-foo:42`.
 
+### Caching
+
+First run will deploy like:
+
+```
+Running "s3:uat" (s3) task
+Retrieving list of existing objects...
+>> Put 'public/vendor/jquery.rest.js'
+>> Put 'index.html'
+>> Put 'scripts/app.js'
+>> Put 'styles/app.css'
+>> Put 'public/img/loader.gif'
+>> Put 'public/vendor/verify.notify.js'
+>> Put 6 files
+```
+
+Subsequent runs should look like:
+
+```
+Running "s3:uat" (s3) task
+>> No change 'index.html'
+>> No change 'public/vendor/jquery.rest.js'
+>> No change 'styles/app.css'
+>> No change 'scripts/app.js'
+>> No change 'public/img/loader.gif'
+>> No change 'public/vendor/verify.notify.js'
+>> Put 0 files
+```
+
 ### More Examples
 
 ``` js
