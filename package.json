@@ -1,7 +1,7 @@
 {
   "name": "grunt-aws",
   "description": "A Grunt interface into the Amazon Node.JS SDK",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "homepage": "https://github.com/jpillora/grunt-aws",
   "author": {
     "name": "Jaime Pillora",
@@ -17,14 +17,19 @@
   },
   "licenses": "MIT",
   "main": "Gruntfile.js",
-  "engines": {
-    "node": ">= 0.8.0"
-  },
   "peerDependencies": {
     "grunt": "~0.4.0"
   },
   "keywords": [
-    "gruntplugin"
+    "gruntplugin",
+    "deploy",
+    "amazon",
+    "aws",
+    "s3",
+    "cache",
+    "caching",
+    "gzip",
+    "compress"
   ],
   "dependencies": {
     "mime": "~1.2.11",

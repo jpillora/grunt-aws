@@ -1,6 +1,6 @@
 ## Example project using `grunt-aws`
 
-* Create a `credentials.json` file like:
+* Create a `aws-credentials.json` file like:
 
     ``` json
     {

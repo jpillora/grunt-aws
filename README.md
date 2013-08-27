@@ -1,9 +1,9 @@
 # grunt-aws
 
-> A Grunt interface into the Amazon Web Services Node.JS SDK
+A Grunt interface into the Amazon Web Services Node.JS SDK `aws-sdk`
 
 ## Getting Started
-This plugin requires Grunt `~0.4.0`
+This plugin requires Grunt `0.4.x`
 
 If you haven't used [Grunt](http://gruntjs.com/) before, be sure to check out the [Getting Started](http://gruntjs.com/getting-started) guide, as it explains how to create a [Gruntfile](http://gruntjs.com/sample-gruntfile) as well as install and use Grunt plugins. Once you're familiar with that process, you may install this plugin with this command:
 
@@ -22,18 +22,21 @@ grunt.loadNpmTasks('grunt-aws');
 *Note:*
 
 This plugin aims to provide a task for each service on AWS.
-Currently however, only the Simple Storage Service task has been implemented.
+Currently however, only the Simple Storage Service `"s3"` task has been implemented.
 
 ## The "s3" task
 
 
 ### Features
 
-* Simple
 * Fast
-* Only upload changes
+* Simple
+* Auto Gzip
+* Smart Caching
 
 ### Usage
+
+To upload all files *inside* `build/` into `my-awesome-bucket`:
 
 ```js
   grunt.initConfig({
@@ -42,16 +45,17 @@ Currently however, only the Simple Storage Service task has been implemented.
       options: {
         accessKeyId: "<%= aws.accessKeyId %>",
         secretAccessKey: "<%= aws.secretAccessKey %>",
-        bucket: "..."
+        bucket: "my-awesome-bucket"
       },
       build: {
-        expand: true,
         cwd: "build/",
-        src: "**/*"
+        src: "**"
       }
     }
   });
 ```
+
+See the complete example [here](https://github.com/jpillora/grunt-aws/tree/master/example)
 
 ### Options
 
@@ -86,6 +90,14 @@ File permissions, must be one of:
 * `"bucket-owner-read"`
 * `"bucket-owner-full-control"`
 
+#### `gzip` (Boolean)
+
+Default `true`
+
+Gzips the file before uploading and sets the appropriate headers
+
+ **Note: The default is `true` because this task assumes you're uploading content to be consumed by [browsers developed after 1999](http://schroepl.net/projekte/mod_gzip/browser.htm). On the terminal, you can retrieve a file using `curl --compressed <url>`.**
+
 #### `dryRun` (Boolean)
 
 Default `false`
@@ -98,20 +110,97 @@ Default `20`
 
 Number of S3 operations that may be performed concurrently 
 
-#### `cacheTimeout` (Number)
+#### `cache` (Boolean)
+
+Default `true`
+
+Don't upload files that already exist (same ETag). Each target has it's
+own options cache, so if you change the options object, files
+will be forced to reupload.
+
+#### `cacheTTL` (Number)
 
 Default `60*60*1000` (1hr)
 
 Number of milliseconds to wait before retrieving the
 object list from S3. If you only modify this bucket
 from `grunt-aws` on one machine then it can be `Infinity`
-if you like. To disable cache, set it to `0`.
+if you like. To disable cache, set it to `0`. 
+
+#### `headers` (Object)
+
+Set HTTP headers
+
+The following headers are allowed by S3:
+
+* `ContentLength`
+* `ContentType`
+* `ContentDisposition`
+* `ContentEncoding`
+* `CacheControl` (converts numbers into strings as `max-age=<num>, public`)
+* `Expires` (converts dates to strings with `toUTCString()`)
+
+#### `meta` (Object)
+
+Set **custom** HTTP headers
+
+All custom headers will be prefixed with `x-amz-meta-`.
+For example `{Foo:"42"}` becomes `x-amz-meta-foo:42`.
+
+### More Examples
+
+``` js
+s3: {
+  options: {
+    accessKeyId: "<%= aws.accessKeyId %>",
+    secretAccessKey: "<%= aws.secretAccessKey %>",
+    bucket: "my-bucket"
+  },
+  //upload all files in img/
+  images: {
+    src: "img/**"
+  },
+  //upload all pdf and txt files in docs/
+  documents: {
+    src: "docs/**/*.{pdf,txt}"
+  },
+  //upload all files in secrets/ to a different bucket
+  secrets: {
+    //override options
+    options: {
+    	bucket: "my-secret-bucket"
+    }
+    src: "secrets/**"
+  },
+  //upload the `public/` directory with a 2 year cache time
+  longTym: {
+    options: {
+      headers: {
+        CacheControl: 630720000 //max-age=630720000, public
+      }
+    }
+    src: "public/**"
+  },
+  //upload the `public/` directory a specific expiry date
+  beryLongTym: {
+    options: {
+      headers: {
+        Expires: new Date('2050') //Sat, 01 Jan 2050 00:00:00 GMT
+      }
+    }
+    src: "public/**"
+  }
+}
+```
 
 ### References
 
 * [S3 AWS SDK API Docs](http://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/S3_20060301.html)
 
+### Todo
 
+* Download operation
+* Delete unmatched files
 
 #### MIT License
 

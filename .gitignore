@@ -1,4 +1,5 @@
-example/credentials.json
 node_modules
+caches
 npm-debug.log
 tmp
+aws-credentials.json
