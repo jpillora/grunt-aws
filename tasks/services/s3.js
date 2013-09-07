@@ -6,7 +6,6 @@ var AWS = require("aws-sdk"),
     fs = require("fs"),
     crypto = require("crypto"),
     zlib = require("zlib"),
-    common = require("../common"),
     CacheMgr = require("../cache-mgr"),
     mime = require("mime");
 
@@ -35,9 +34,8 @@ module.exports = function(grunt) {
     this.files.forEach(function(file) {
       var cwd = file.cwd || '';
       files = files.concat(file.src.map(function(src) {
-
         var s = path.join(cwd, src),
-            d = file.dest || src;
+            d = (cwd||file.src.length>1) ? ((file.dest||'')+src) : file.dest || src;
         return {src: s, dest: d};
       }));
     });
@@ -53,13 +51,25 @@ module.exports = function(grunt) {
     //mark as async
     var done = this.async();
     //get options
-    var opts = _.defaults(this.options(), DEFAULTS);
+    var opts = this.options(DEFAULTS);
 
     //checks
     if(!opts.bucket)
       grunt.fail.warn("No 'bucket' has been specified");
 
-    common.configUpdate(opts);
+    //custom mime types
+    if(typeof opts.mime === 'object')
+      mime.define(opts.mime);
+    if(typeof opts.mimeDefault === 'string')
+      mime.default_type = opts.mimeDefault;
+
+    //whitelist allowed keys
+    AWS.config.update(_.pick(opts,
+      'accessKeyId',
+      'secretAccessKey',
+      'region'
+    ));
+
     //s3 client
     var S3 = new AWS.S3();
 

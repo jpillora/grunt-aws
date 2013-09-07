@@ -134,7 +134,7 @@ Set HTTP headers
 The following headers are allowed by S3:
 
 * `ContentLength`
-* `ContentType`
+* `ContentType` (will override mime type lookups)
 * `ContentDisposition`
 * `ContentEncoding`
 * `CacheControl` (converts numbers into strings as `max-age=<num>, public`)
@@ -146,6 +146,20 @@ Set **custom** HTTP headers
 
 All custom headers will be prefixed with `x-amz-meta-`.
 For example `{Foo:"42"}` becomes `x-amz-meta-foo:42`.
+
+#### `mime` (Object)
+
+Define your own mime types
+
+This object will be passed into [`mime.define()`](https://github.com/broofa/node-mime#mimedefine)
+
+#### `mimeDefault` (String)
+
+Default `"application/octet-stream"`
+
+The default mime type for when [`mime.lookup()`](https://github.com/broofa/node-mime#mimelookuppath) fails
+
+---
 
 ### Caching
 
@@ -176,24 +190,69 @@ Running "s3:uat" (s3) task
 >> Put 0 files
 ```
 
-### More Examples
+---
+
+### Explained Examples
 
 ``` js
 s3: {
+  //provide your options...
+
   options: {
     accessKeyId: "<%= aws.accessKeyId %>",
     secretAccessKey: "<%= aws.secretAccessKey %>",
     bucket: "my-bucket"
   },
-  //upload all files in img/
+
+  //then create some targets...
+
+  //upload all files within build/ to root
+  build: {
+    cwd: "build/",
+    src: "**"
+  },
+
+  //upload all files within build/ to output/
+  move: {
+    cwd: "build/",
+    src: "**",
+    dest: "output/"
+  },
+
+  //upload and rename an individual file
+  specificFile: {
+    src: "build/a.txt",
+    dest: "output/b.txt"
+  },
+
+  //upload and rename many individual files
+  specificFiles: {
+    files: [{
+      src: "build/a.txt",
+      dest: "output/b.txt"
+    },{
+      src: "build/c.txt",
+      dest: "output/d.txt"
+    }]
+  },
+
+  //upload and rename many individual files (shorter syntax)
+  specificFilesShort: {
+    "output/b.txt": "build/a.txt"
+    "output/d.txt": "build/c.txt"
+  },
+
+  //upload the img/ folder and all it's files
   images: {
     src: "img/**"
   },
-  //upload all pdf and txt files in docs/
+
+  //upload the docs/ folder and it's pdf and txt files
   documents: {
     src: "docs/**/*.{pdf,txt}"
   },
-  //upload all files in secrets/ to a different bucket
+
+  //upload the secrets/ folder and all its files to a different bucket
   secrets: {
     //override options
     options: {
@@ -201,7 +260,8 @@ s3: {
     }
     src: "secrets/**"
   },
-  //upload the `public/` directory with a 2 year cache time
+
+  //upload the public/ folder with a 2 year cache time
   longTym: {
     options: {
       headers: {
@@ -210,7 +270,7 @@ s3: {
     }
     src: "public/**"
   },
-  //upload the `public/` directory a specific expiry date
+  //upload the public/ folder with a specific expiry date
   beryLongTym: {
     options: {
       headers: {

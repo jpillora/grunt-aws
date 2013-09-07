@@ -1,6 +1,5 @@
 
-var _ = require("lodash"),
-    fs = require("fs"),
+var fs = require("fs"),
     path = require("path"),
     dirPath = path.join(__dirname,"..","caches"),
     active = [];
