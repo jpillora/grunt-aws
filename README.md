@@ -79,9 +79,13 @@ For all possible values, see [Location constraints](http://docs.aws.amazon.com/g
 
 #### `sslEnabled` (Boolean)
 
+Default `true`
+
 SSL is enabled or not
 
 #### `maxRetries` (Number)
+
+Default `3`
 
 Number of retries for a request
 
