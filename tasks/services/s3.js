@@ -1,4 +1,3 @@
-
 var AWS = require("aws-sdk"),
     path = require("path"),
     async = require("async"),
@@ -67,7 +66,9 @@ module.exports = function(grunt) {
     AWS.config.update(_.pick(opts,
       'accessKeyId',
       'secretAccessKey',
-      'region'
+      'region',
+      'sslEnabled',
+      'maxRetries'
     ));
 
     //s3 client
