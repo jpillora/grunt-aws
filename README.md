@@ -77,6 +77,14 @@ Default *US Standard*
 
 For all possible values, see [Location constraints](http://docs.aws.amazon.com/general/latest/gr/rande.html#s3_region).
 
+#### `sslEnabled` (Boolean)
+
+SSL is enabled or not
+
+#### `maxRetries` (Number)
+
+Number of retries for a request
+
 #### `access` (String)
 
 Default `"public-read"`
