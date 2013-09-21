@@ -32,7 +32,7 @@ Currently however, only the Simple Storage Service `"s3"` task has been implemen
 * Fast
 * Simple
 * Auto Gzip
-* Smart Caching
+* Smart Local Caching
 
 ### Usage
 
