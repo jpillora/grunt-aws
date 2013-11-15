@@ -141,9 +141,9 @@ if you like. To disable cache, set it to `0`.
 
 #### `headers` (Object)
 
-Set HTTP headers
+Set HTTP headers, please see the [putObject docs](http://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/S3.html#putObject-property)
 
-The following headers are allowed by S3:
+The following are allowed:
 
 * `ContentLength`
 * `ContentType` (will override mime type lookups)
@@ -151,6 +151,21 @@ The following headers are allowed by S3:
 * `ContentEncoding`
 * `CacheControl` (converts numbers into strings as `max-age=<num>, public`)
 * `Expires` (converts dates to strings with `toUTCString()`)
+* `GrantFullControl`
+* `GrantRead`
+* `GrantReadACP`
+* `GrantWriteACP`
+* `ServerSideEncryption` (`"AES256"`)
+* `StorageClass` (`"STANDARD"` or `"REDUCED_REDUNDANCY"`) 
+* `WebsiteRedirectLocation`
+
+The properties not listed are still available as:
+
+* `ACL` - `access` option above
+* `Body` - the file to be uploaded
+* `Key` - the calculated file path
+* `Bucket` - `bucket` option above
+* `Metadata` - `meta` option below
 
 #### `meta` (Object)
 
@@ -296,7 +311,7 @@ s3: {
 
 ### References
 
-* [S3 AWS SDK API Docs](http://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/S3_20060301.html)
+* [S3 AWS SDK API Docs](http://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/S3.html)
 
 ### Todo
 

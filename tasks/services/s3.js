@@ -101,12 +101,20 @@ module.exports = function(grunt) {
     if(typeof opts.headers === 'object')
       _.extend(baseObject, _.pick(
         opts.headers,
+        //http://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/S3.html#putObject-property
         'ContentLength',
         'ContentType',
         'ContentDisposition',
         'ContentEncoding',
         'CacheControl',
-        'Expires'
+        'Expires',
+        'GrantFullControl',
+        'GrantRead',
+        'GrantReadACP',
+        'GrantWriteACP',
+        'ServerSideEncryption',
+        'StorageClass',
+        'WebsiteRedirectLocation'
       ));
 
     //convert numbers and dates
