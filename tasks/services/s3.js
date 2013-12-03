@@ -68,8 +68,9 @@ module.exports = function(grunt) {
       'secretAccessKey',
       'region',
       'sslEnabled',
-      'maxRetries'
-    ));
+      'maxRetries',
+      'httpOptions'
+    ), true);
 
     //s3 client
     var S3 = new AWS.S3();
