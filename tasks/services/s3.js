@@ -151,7 +151,10 @@ module.exports = function(grunt) {
     if(opts.enableWeb)
       subtasks.push(enableWebHosting);
 
-    subtasks = subtasks.concat([getFileList, copyAllFiles]);
+    if(!opts.cache)
+      subtasks.push(getFileList);
+
+    subtasks.push(copyAllFiles);
 
     //start!
     async.series(subtasks, taskComplete);
@@ -206,11 +209,6 @@ module.exports = function(grunt) {
     }
 
     function getFileList(callback) {
-
-      //disabled caching
-      if(!opts.cache)
-        return callback();
-
       //calculate prefix
       var prefix = null, pindex = Infinity;
       files.forEach(function(file) {
