@@ -8,6 +8,10 @@
     "email": "dev@jpillora.com",
     "url": "http://jpillora.com"
   },
+  "maintainers": [
+    "dev@jpillora.com",
+    "b.j.rossiter@gmail.com"
+  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/jpillora/grunt-aws"
