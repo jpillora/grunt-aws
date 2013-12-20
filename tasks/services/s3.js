@@ -22,7 +22,9 @@ module.exports = function(grunt) {
     // deleteMatched: true,
     dryRun: false,
     gzip: true,
-    cache: true
+    cache: true,
+    createBucket: false,
+    enableWeb: false
   };
 
   //s3 task
@@ -139,17 +141,74 @@ module.exports = function(grunt) {
     if(stats.newOptions)
       cache.options[this.target] = optionsHash;
 
+    var subtasks = [];
+
+    //create the bucket if it does not exist
+    if(opts.createBucket)
+      subtasks.push(createBucket);
+
+    //enable webhosting
+    if(opts.enableWeb)
+      subtasks.push(enableWebHosting);
+
+    if(!opts.cache)
+      subtasks.push(getFileList);
+
+    subtasks.push(copyAllFiles);
+
     //start!
-    async.series([getFileList, copyAllFiles], taskComplete);
+    async.series(subtasks, taskComplete);
 
     //------------------------------------------------
 
+    function createBucket(callback) {
+      //check the bucket doesn't exist first
+      S3.listBuckets(function(err, data){
+        if(err) return callback(err);
+        var existingBucket = _.detect(data.Buckets, function(bucket){
+          return opts.bucket === bucket.Name;
+        });
+        if(existingBucket){
+          grunt.log.writeln('Existing bucket found.');
+          callback();
+        }else{
+          grunt.log.writeln('Creating bucket ' + opts.bucket + '...');
+          //create the bucket using the bucket, access and region options
+          if (opts.dryRun) return callback();
+          S3.createBucket({
+            Bucket: opts.bucket,
+            ACL: opts.access,
+            CreateBucketConfiguration: { LocationConstraint: opts.region }
+          }, function(err, data){
+            if(err) return callback(err);
+            grunt.log.writeln('New bucket\'s location is: ' + data.Location);
+            // Disable caching if bucket is newly created
+            opts.cache = false;
+            callback();
+          });
+        }
+      });
+    }
+
+    function enableWebHosting(callback) {
+      S3.getBucketWebsite({ Bucket:opts.bucket }, function(err){
+        if (err && err.name === 'NoSuchWebsiteConfiguration'){
+          //opts.enableWeb can be the params for WebsiteRedirectLocation.
+          //Otherwise, just set the index.html as default suffix
+          grunt.log.writeln('Enabling website configuration on ' + opts.bucket + '...');
+          var webOptions = _.isObject(opts.enableWeb) ? opts.enableWeb : { IndexDocument: { Suffix : 'index.html' }};
+          if (opts.dryRun) return callback();
+          S3.putBucketWebsite({
+            Bucket: opts.bucket,
+            WebsiteConfiguration: webOptions
+          }, callback);
+        }else{
+          callback(err);
+        }
+      });
+    }
+
     function getFileList(callback) {
-
-      //disabled caching
-      if(!opts.cache)
-        return callback();
-
       //calculate prefix
       var prefix = null, pindex = Infinity;
       files.forEach(function(file) {

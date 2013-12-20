@@ -186,6 +186,19 @@ Default `"application/octet-stream"`
 
 The default mime type for when [`mime.lookup()`](https://github.com/broofa/node-mime#mimelookuppath) fails
 
+#### `createBucket` (Boolean)
+
+Default `false`
+
+Create the bucket if it does not exist. Use the `bucket` option to name the bucket. Use the `access` and `region` as parameters when creating the bucket.
+
+#### `enableWeb` (object)
+
+Default `false`
+
+Configure static web hosting for the bucket. Set to `true` to enable the default hosting with the `IndexDocument` set to `index.html`. Otherwise, set the value to be an object that matches the parameters required for `WebsiteConfiguration` in [putBucketWebsite docs](http://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/S3.html#putBucketWebsite-property).
+
+
 ---
 
 ### Caching
