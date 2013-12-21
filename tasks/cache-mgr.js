@@ -1,12 +1,11 @@
-
 var fs = require("fs"),
     path = require("path"),
-    dirPath = path.join(__dirname,"..","caches"),
-    active = [];
+    dirPath = path.join(__dirname,"..","caches");
 
 if(!fs.existsSync(dirPath))
   fs.mkdirSync(dirPath);
 
+//retreives/creates a given cache from disk
 exports.get = function(name) {
   var p = cachePath(name);
 
@@ -20,13 +19,13 @@ exports.get = function(name) {
     }
   }
 
-  meta(cache, name);
+  mapObj(cache, name);
   return cache;
 };
 
-
+//saves a cache to disk
 exports.put = function(cache) {
-  var name = meta(cache);
+  var name = mapObj(cache);
   if(!name)
     throw "Object not found. Only put objects that have been 'get()'";
   var p = cachePath(name);
@@ -40,17 +39,18 @@ function cachePath(name) {
 }
 
 //object -> string map
-function meta(obj, m) {
-  if(!active.meta)
-    active.meta = {};
-
-  var i = active.indexOf(obj);
-  if(m && i === -1) {
-    active.push(obj);
-    i = active.indexOf(obj);
-    active.meta[i] = m;
+// mapObj(obj) => get str by obj
+// mapObj(obj, str) => set str
+mapObj.objs = [];
+mapObj.strs = [];
+function mapObj(obj, str) {
+  var i = mapObj.objs.indexOf(obj);
+  if(str && i === -1) {
+    mapObj.objs.push(obj);
+    i = mapObj.objs.indexOf(obj);
+    mapObj.strs[i] = str;
   } else if(i >= 0) {
-    return active.meta[i];
+    return mapObj.strs[i];
   }
   return null;
 }
