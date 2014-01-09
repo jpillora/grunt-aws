@@ -22,7 +22,7 @@ grunt.loadNpmTasks('grunt-aws');
 *Note:*
 
 This plugin aims to provide a task for each service on AWS.
-Currently however, only the Simple Storage Service `"s3"` task has been implemented.
+Currently however, only the Simple Storage Service `"s3"` and Route 53 `"route53"` tasks have been implemented.
 
 ## The "s3" task
 
@@ -330,6 +330,93 @@ s3: {
 
 * Download operation
 * Delete unmatched files
+
+## The "route53" task
+
+### Features
+
+* Create DNS records using simple configuration
+* Smart Local Caching
+
+### Usage
+
+To create two new records - the first resolving to an IP address and the second resolving to the domain name a bucket:
+
+```js
+  grunt.initConfig({
+    aws: grunt.file.readJSON("credentials.json"),
+    route53: {
+      options: {
+        accessKeyId: "<%= aws.accessKeyId %>",
+        secretAccessKey: "<%= aws.secretAccessKey %>",
+        zones: {
+		  'mydomain.org': [{
+             name: 'record1.mydomain.org',
+             type: 'A',
+             TTL: 300,
+             value: ['1.1.1.1']
+          },{
+            name: 'record2.mydomain.org',
+            type: 'CNAME',
+            TTL: 300,
+            value: [{ bucket: 'my-awesome-bucket' }]
+          }]
+        }
+      }
+    }
+  });
+```
+
+### Options
+
+#### `accessKeyId` *required* (String) 
+
+Amazon access key id
+
+#### `secretAccessKey` *required* (String) 
+
+Amazon secret access key
+
+#### `zones` *required* (Object)
+
+An object containing names of zones and a list of DNS records to be created for this zone in Route 53.
+
+Each record requires `name`, `type` and `value` to be set. The `name` property is the new domain to be created. The `type` is the DNS type e.g. CNAME, ANAME, etc.. The `value` is a list of domain names or IP addresses that the DNS entry will resolve to. 
+
+It is also possible to specify any of the additional options described in the [ResourceRecordSet section of the changeResourceRecordSets method](http://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/Route53.html#changeResourceRecordSets-property). For example, `AliasTarget` could be used to set up an alias record.	
+
+#### `TTL` (Number)
+
+Default 300
+
+Default TTL of any new Route 53 records.
+
+#### `dryRun` (Boolean)
+
+Default `false`
+
+Performs a preview run displaying what would be modified
+
+#### `concurrency` (Number)
+
+Default `20`
+
+Number of Route53 operations that may be performed concurrently 
+
+#### `cache` (Boolean)
+
+Default `true`
+
+Cache data returned from Route 53. Once records
+
+### References
+
+* [Route 53 AWS SDK API Docs](http://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/Route53.html)
+
+### Todo
+
+* Better support for alias records
+* Create zones?
 
 #### MIT License
 
