@@ -357,7 +357,7 @@ To create two new records - the first resolving to an IP address and the second 
           },{
             name: 'record2.mydomain.org',
             type: 'CNAME',
-            value: ['test-app.theglobalmail.org.s3-website-ap-southeast-2.amazonaws.com']
+            value: ['record2.mydomain.org.s3-website-ap-southeast-2.amazonaws.com']
           }]
         }
       }
