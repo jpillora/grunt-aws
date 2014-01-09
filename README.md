@@ -350,16 +350,14 @@ To create two new records - the first resolving to an IP address and the second 
         accessKeyId: "<%= aws.accessKeyId %>",
         secretAccessKey: "<%= aws.secretAccessKey %>",
         zones: {
-		  'mydomain.org': [{
+		      'mydomain.org': [{
              name: 'record1.mydomain.org',
              type: 'A',
-             TTL: 300,
              value: ['1.1.1.1']
           },{
             name: 'record2.mydomain.org',
             type: 'CNAME',
-            TTL: 300,
-            value: [{ bucket: 'my-awesome-bucket' }]
+            value: ['test-app.theglobalmail.org.s3-website-ap-southeast-2.amazonaws.com']
           }]
         }
       }
