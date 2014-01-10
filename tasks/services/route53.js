@@ -40,8 +40,7 @@ module.exports = function(grunt) {
     //whitelist allowed keys
     AWS.config.update(_.pick(opts,
       'accessKeyId',
-      'secretAccessKey',
-      'zones'
+      'secretAccessKey'
     ), true);
  
     //route53 client
@@ -166,7 +165,7 @@ module.exports = function(grunt) {
         }
       });
       //add default TTL if not specified
-      if (!changeRequest.TTL){
+      if (!changeRequest.TTL && !changeRequest.AliasTarget){
         changeRequest.TTL = opts.TTL;
       }
       return { Action: 'CREATE', ResourceRecordSet: changeRequest };
