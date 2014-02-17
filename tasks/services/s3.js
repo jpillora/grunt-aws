@@ -23,6 +23,7 @@ module.exports = function(grunt) {
     dryRun: false,
     gzip: true,
     cache: true,
+    overwrite: true,
     createBucket: false,
     enableWeb: false
   };
@@ -299,6 +300,12 @@ module.exports = function(grunt) {
          !stats.newOptions &&
          etag && etag === hash(contents, 'md5')) {
         grunt.log.ok(DRYRUN + "No change '" + dest + "'");
+        callback();
+        return;
+      }
+
+      if(!opts.overwrite && etag) {
+        grunt.log.ok(DRYRUN + "File already exists '" + dest + "'");
         callback();
         return;
       }

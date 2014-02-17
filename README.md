@@ -130,6 +130,12 @@ Don't upload files that already exist (same ETag). Each target has it's
 own options cache, so if you change the options object, files
 will be forced to reupload.
 
+#### `overwrite` (Boolean)
+
+Default `true`
+
+Upload files even if they already exist (same path).
+
 #### `cacheTTL` (Number)
 
 Default `60*60*1000` (1hr)
