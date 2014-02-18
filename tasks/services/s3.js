@@ -339,7 +339,7 @@ module.exports = function(grunt) {
       
       //all done
       grunt.log.ok("Put " + stats.puts + " files");
-      if(stats.puts || stats.dels || stats.refreshed || stats.newOptions)
+      if(opts.cache && (stats.puts || stats.dels || stats.refreshed || stats.newOptions))
         CacheMgr.put(cache);
       done(err);
     }
