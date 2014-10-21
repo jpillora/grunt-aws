@@ -416,6 +416,58 @@ Cache data returned from Route 53. Once records
 * Better support for alias records
 * Create zones?
 
+
+## The "cloudfront" task
+
+### Features
+
+* Invalidate a list of files, up to the maximum allowed by CloudFront
+
+### Usage
+
+To invalidate the files `/index.html` and `/pages/whatever.html`
+
+```js
+  grunt.initConfig({
+    aws: grunt.file.readJSON("credentials.json"),
+    cloudfront: {
+      options: {
+        accessKeyId: "<%= aws.accessKeyId %>",
+        secretAccessKey: "<%= aws.secretAccessKey %>",
+        distributionId: '...',
+        invalidations: [
+          '/index.html',
+          '/pages/whatever.html'
+        ]
+      }
+    }
+  });
+```
+
+### Options
+
+#### `accessKeyId` *required* (String) 
+
+Amazon access key id
+
+#### `secretAccessKey` *required* (String) 
+
+Amazon secret access key
+
+#### `distributionId` *required* (String)
+
+The CloudFront Distribution ID to be acted on
+
+#### `invalidations` *required* (Array)
+
+An array of strings that are each a root relative path to a file to be invalidated
+
+
+### References
+
+* [CloudFront AWS SDK API Docs](http://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/CloudFront.html)
+
+
 #### MIT License
 
 Copyright &copy; 2013 Jaime Pillora &lt;dev@jpillora.com&gt;
