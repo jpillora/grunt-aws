@@ -17,6 +17,17 @@ module.exports = function(grunt) {
         cwd: "build",
         src: "**"
       }
+    },
+
+    cloudfront: {
+      options: {
+        accessKeyId: "<%= aws.accessKeyId %>",
+        secretAccessKey: "<%= aws.secretAccessKey %>",
+        distributionId: "...",
+        invalidations: [
+          "/index.html"
+        ]
+      }
     }
   });
 
