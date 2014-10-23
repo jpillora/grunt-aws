@@ -19,13 +19,18 @@ grunt.loadNpmTasks('grunt-aws');
 
 -----
 
-*Note:*
+### Supported Services
 
 This plugin aims to provide a task for each service on AWS.
-Currently however, only the Simple Storage Service `"s3"` and Route 53 `"route53"` tasks have been implemented.
+Currently however, it only supports:
+
+* [Simple Storage Service `"s3"`](#the-s3-task)
+* [Route 53 `"route53"`](#the-route53-task)
+* [CloudFront `"cloudfront"`](#the-cloudfront-task)
+
+-----
 
 ## The "s3" task
-
 
 ### Features
 
@@ -120,21 +125,21 @@ Performs a preview run displaying what would be modified
 
 Default `20`
 
-Number of S3 operations that may be performed concurrently 
-
-#### `cache` (Boolean)
-
-Default `true`
-
-Don't upload files that already exist (same ETag). Each target has it's
-own options cache, so if you change the options object, files
-will be forced to reupload.
+Number of S3 operations that may be performed concurrently
 
 #### `overwrite` (Boolean)
 
 Default `true`
 
-Upload files even if they already exist (same path).
+Upload files, whether or not they already exist (set to `false` if you never update existing files).
+
+#### `cache` (Boolean)
+
+Default `true`
+
+Skip uploading files which have already been uploaded (same ETag). Each target has it's
+own options cache, so if you change the options object, files
+will be forced to reupload.
 
 #### `cacheTTL` (Number)
 
@@ -208,9 +213,6 @@ Default `false`
 
 Configure static web hosting for the bucket. Set to `true` to enable the default hosting with the `IndexDocument` set to `index.html`. Otherwise, set the value to be an object that matches the parameters required for `WebsiteConfiguration` in [putBucketWebsite docs](http://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/S3.html#putBucketWebsite-property).
 
-
----
-
 ### Caching
 
 First run will deploy like:
@@ -239,8 +241,6 @@ Running "s3:uat" (s3) task
 >> No change 'public/vendor/verify.notify.js'
 >> Put 0 files
 ```
-
----
 
 ### Explained Examples
 
@@ -341,6 +341,8 @@ s3: {
 * Download operation
 * Delete unmatched files
 
+---
+
 ## The "route53" task
 
 ### Features
@@ -426,6 +428,7 @@ Cache data returned from Route 53. Once records
 * Better support for alias records
 * Create zones?
 
+---
 
 ## The "cloudfront" task
 
