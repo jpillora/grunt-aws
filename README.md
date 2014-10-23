@@ -180,6 +180,10 @@ Set **custom** HTTP headers
 All custom headers will be prefixed with `x-amz-meta-`.
 For example `{Foo:"42"}` becomes `x-amz-meta-foo:42`.
 
+#### `charset` (String)
+
+Define a charset to set on your ContentType. Ie. `utf-8`
+
 #### `mime` (Object)
 
 Define your own mime types
