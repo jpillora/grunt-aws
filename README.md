@@ -2,6 +2,8 @@
 
 A Grunt interface into the Amazon Web Services Node.JS SDK `aws-sdk`
 
+[![NPM version](https://nodei.co/npm/grunt-aws.png?compact=true)](https://npmjs.org/package/grunt-aws)
+
 ## Getting Started
 This plugin requires Grunt `0.4.x`
 
@@ -187,7 +189,7 @@ For example `{Foo:"42"}` becomes `x-amz-meta-foo:42`.
 
 #### `charset` (String)
 
-Define a charset to set on your ContentType. Ie. `utf-8`
+Add a charset to your `Content-Type`. For example: `utf-8`.
 
 #### `mime` (Object)
 
