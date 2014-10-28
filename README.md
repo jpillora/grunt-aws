@@ -450,10 +450,14 @@ To invalidate the files `/index.html` and `/pages/whatever.html`
         accessKeyId: "<%= aws.accessKeyId %>",
         secretAccessKey: "<%= aws.secretAccessKey %>",
         distributionId: '...',
-        invalidations: [
-          '/index.html',
-          '/pages/whatever.html'
-        ]
+      },
+      html: {
+        options: {
+          invalidations: [
+            '/index.html',
+            '/pages/whatever.html'
+          ]
+        }
       }
     }
   });

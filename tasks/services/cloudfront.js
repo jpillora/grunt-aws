@@ -11,7 +11,7 @@ module.exports = function(grunt) {
   var DEFAULTS = {};
 
   //cloudfront task
-  grunt.registerTask("cloudfront", DESC, function() {
+  grunt.registerMultiTask("cloudfront", DESC, function() {
 
     //get options
     var opts = this.options(DEFAULTS);
