@@ -27,7 +27,8 @@ module.exports = function(grunt) {
         invalidations: [
           "/index.html"
         ]
-      }
+      },
+      invalidate: {}
     }
   });
 
