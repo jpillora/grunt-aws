@@ -28,7 +28,19 @@ module.exports = function(grunt) {
           "/index.html"
         ]
       }
+    },
+
+    sns: {
+      options: {
+        accessKeyId: "<%= aws.accessKeyId %>",
+        secretAccessKey: "<%= aws.secretAccessKey %>",
+        region: "...",
+        target: "...",
+        message: "...",
+        subject: "..."
+      }
     }
+
   });
 
   grunt.registerTask("default", ["s3"]);
