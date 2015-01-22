@@ -66,11 +66,11 @@ See the complete example [here](https://github.com/jpillora/grunt-aws/tree/maste
 
 ### Options
 
-#### `accessKeyId` *required* (String) 
+#### `accessKeyId` *required* (String)
 
 Amazon access key id
 
-#### `secretAccessKey` *required* (String) 
+#### `secretAccessKey` *required* (String)
 
 Amazon secret access key
 
@@ -135,6 +135,16 @@ Default `true`
 
 Upload files, whether or not they already exist (set to `false` if you never update existing files).
 
+### CopyFile (String)
+Default `None`
+
+Path to copy filewithin S3. ex. `my-bucket2/output/d.txt`
+
+### CopyFrom (String)
+Default `None`
+
+Path to copy all files within S3. ex. `my-bucket2/output/`
+
 #### `cache` (Boolean)
 
 Default `true`
@@ -150,7 +160,7 @@ Default `60*60*1000` (1hr)
 Number of milliseconds to wait before retrieving the
 object list from S3. If you only modify this bucket
 from `grunt-aws` on one machine then it can be `Infinity`
-if you like. To disable cache, set it to `0`. 
+if you like. To disable cache, set it to `0`.
 
 #### `headers` (Object)
 
@@ -169,7 +179,7 @@ The following are allowed:
 * `GrantReadACP`
 * `GrantWriteACP`
 * `ServerSideEncryption` (`"AES256"`)
-* `StorageClass` (`"STANDARD"` or `"REDUCED_REDUNDANCY"`) 
+* `StorageClass` (`"STANDARD"` or `"REDUCED_REDUNDANCY"`)
 * `WebsiteRedirectLocation`
 
 The properties not listed are still available as:
@@ -330,7 +340,25 @@ s3: {
       }
     }
     src: "public/**"
+  },
+  
+  //Copy file directly from s3 bucket to a different bucket
+  copyFile: {
+    src: "build/c.txt",
+    dest: "output/d.txt",
+    options: {
+      copyFile: "my-bucket2/output/d.txt"
+    }
+  },
+
+  //Copy all files in directory
+  copyFiles: {
+    src: "public/**",
+    options: {
+      copyFrom: 'my-bucket2/public'
+    }
   }
+
 }
 ```
 
@@ -381,11 +409,11 @@ To create two new records - the first resolving to an IP address and the second 
 
 ### Options
 
-#### `accessKeyId` *required* (String) 
+#### `accessKeyId` *required* (String)
 
 Amazon access key id
 
-#### `secretAccessKey` *required* (String) 
+#### `secretAccessKey` *required* (String)
 
 Amazon secret access key
 
@@ -393,9 +421,9 @@ Amazon secret access key
 
 An object containing names of zones and a list of DNS records to be created for this zone in Route 53.
 
-Each record requires `name`, `type` and `value` to be set. The `name` property is the new domain to be created. The `type` is the DNS type e.g. CNAME, ANAME, etc.. The `value` is a list of domain names or IP addresses that the DNS entry will resolve to. 
+Each record requires `name`, `type` and `value` to be set. The `name` property is the new domain to be created. The `type` is the DNS type e.g. CNAME, ANAME, etc.. The `value` is a list of domain names or IP addresses that the DNS entry will resolve to.
 
-It is also possible to specify any of the additional options described in the [ResourceRecordSet section of the changeResourceRecordSets method](http://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/Route53.html#changeResourceRecordSets-property). For example, `AliasTarget` could be used to set up an alias record.	
+It is also possible to specify any of the additional options described in the [ResourceRecordSet section of the changeResourceRecordSets method](http://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/Route53.html#changeResourceRecordSets-property). For example, `AliasTarget` could be used to set up an alias record.
 
 #### `TTL` (Number)
 
@@ -413,7 +441,7 @@ Performs a preview run displaying what would be modified
 
 Default `20`
 
-Number of Route53 operations that may be performed concurrently 
+Number of Route53 operations that may be performed concurrently
 
 #### `cache` (Boolean)
 
@@ -461,11 +489,11 @@ To invalidate the files `/index.html` and `/pages/whatever.html`
 
 ### Options
 
-#### `accessKeyId` *required* (String) 
+#### `accessKeyId` *required* (String)
 
 Amazon access key id
 
-#### `secretAccessKey` *required* (String) 
+#### `secretAccessKey` *required* (String)
 
 Amazon secret access key
 
@@ -505,8 +533,3 @@ IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
 CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
 TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
-
-
-
-
