@@ -335,7 +335,7 @@ module.exports = function(grunt) {
         } else {
           copySource = opts.copyFile;
         }
-
+        object.MetadataDirective  = "REPLACE";
         object.CopySource = copySource;
         action = "Copy";
         S3.copyObject(object, putComplete)
