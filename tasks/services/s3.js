@@ -67,6 +67,7 @@ module.exports = function(grunt) {
     AWS.config.update(_.pick(opts,
       'accessKeyId',
       'secretAccessKey',
+      'sessionToken',
       'region',
       'sslEnabled',
       'maxRetries',

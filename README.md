@@ -78,6 +78,10 @@ Amazon secret access key
 
 Bucket name
 
+#### `sessionToken` (String)
+
+Amazon session token, required if you're using temporary access keys
+
 #### `region` (String)
 
 Default *US Standard*
