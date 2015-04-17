@@ -321,8 +321,9 @@ module.exports = function(grunt) {
       if(!object.ContentType)
         object.ContentType = mime.lookup(dest);
 
-      // Set a default charset
-      if (opts.charset) object.ContentType += '; charset=' + opts.charset;
+      // Set the charset, default text type mime types to UTF-8
+      var charset = mime.charsets.lookup(object.ContentType, '') || opts.charset;
+      if (charset) object.ContentType += '; charset=' + charset;
 
       //upload!
       S3.putObject(object, putComplete);
