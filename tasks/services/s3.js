@@ -124,6 +124,19 @@ module.exports = function(grunt) {
     //convert numbers and dates
     if(typeof baseObject.CacheControl === 'number')
       baseObject.CacheControl = "max-age="+baseObject.CacheControl+", public";
+    else if (typeof baseObject.CacheControl === 'object') {
+      var val = baseObject.CacheControl,
+          maxage = val.MaxAge || null,
+          swr = val.StaleWhileRevalidate || null;
+      if (!maxage) {
+        grunt.fail.warn("max_age is required for Cache-Control header");
+      }
+      if (swr) {
+        baseObject.CacheControl = "max-age="+maxage+", stale-while-revalidate="+swr+", public";
+      } else {
+        baseObject.CacheControl = "max-age="+maxage+", public";
+      }
+    }
 
     if(baseObject.Expires instanceof Date)
       baseObject.Expires = baseObject.Expires.toUTCString();
