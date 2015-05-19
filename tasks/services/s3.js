@@ -25,7 +25,8 @@ module.exports = function(grunt) {
     cache: true,
     overwrite: true,
     createBucket: false,
-    enableWeb: false
+    enableWeb: false,
+    signatureVersion: 'v2'
   };
 
   //s3 task
@@ -76,7 +77,7 @@ module.exports = function(grunt) {
     ), true);
 
     //s3 client
-    var S3 = new AWS.S3();
+    var S3 = new AWS.S3({signatureVersion: opts.signatureVersion});
 
     //dry run prefix
     var DRYRUN = opts.dryRun ? "[DRYRUN] " : "";
@@ -359,7 +360,7 @@ module.exports = function(grunt) {
         grunt.fail.warn(err);
         return done(false);
       }
-      
+
       //all done
       grunt.log.ok("Put " + stats.puts + " files");
       if(opts.cache && (stats.puts || stats.dels || stats.refreshed || stats.newOptions))
