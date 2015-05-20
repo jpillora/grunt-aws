@@ -26,7 +26,7 @@ module.exports = function(grunt) {
     overwrite: true,
     createBucket: false,
     enableWeb: false,
-    signatureVersion: 'v2'
+    signatureVersion: 'v4'
   };
 
   //s3 task
