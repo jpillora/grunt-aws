@@ -179,7 +179,10 @@ module.exports = function(grunt) {
     function createBucket(callback) {
       //check the bucket doesn't exist first
       S3.listBuckets(function(err, data){
-        if(err) return callback(err);
+        if(err) {
+          err.message = 'createBucket:S3.listBuckets: ' + err.message;
+          return callback(err);
+        }
         var existingBucket = _.detect(data.Buckets, function(bucket){
           return opts.bucket === bucket.Name;
         });
@@ -195,7 +198,10 @@ module.exports = function(grunt) {
             ACL: opts.access,
             CreateBucketConfiguration: { LocationConstraint: opts.region }
           }, function(err, data){
-            if(err) return callback(err);
+            if(err) {
+              err.message = 'createBucket:S3.listBuckets:S3.createBucket: ' + err.message;
+              return callback(err);
+            }
             grunt.log.writeln('New bucket\'s location is: ' + data.Location);
             // Disable caching if bucket is newly created
             opts.cache = false;
@@ -217,8 +223,11 @@ module.exports = function(grunt) {
             Bucket: opts.bucket,
             WebsiteConfiguration: webOptions
           }, callback);
-        }else{
-          callback(err);
+        } else {
+          if(err){
+            err.message = 'enableWebHosting:S3.getBucketWebsite: ' + err.message;
+          }
+          return callback(err);
         }
       });
     }
@@ -269,7 +278,10 @@ module.exports = function(grunt) {
           Marker: marker,
           Prefix: prefix
         }, function(err, objs) {
-          if(err) return callback(err);
+          if(err) {
+            err.message = 'getFileList:fetchObjects:S3.listObjects: ' + err.message;
+            return callback(err);
+          }
 
           //store results
           objs.Contents.forEach(function(obj) {
