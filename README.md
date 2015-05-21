@@ -162,7 +162,7 @@ The following are allowed:
 * `ContentType` (will override mime type lookups)
 * `ContentDisposition`
 * `ContentEncoding`
-* `CacheControl` (converts numbers into strings as `max-age=<num>, public`)
+* `CacheControl` (accepts a string or converts numbers into header as `max-age=<num>, public`)
 * `Expires` (converts dates to strings with `toUTCString()`)
 * `GrantFullControl`
 * `GrantRead`
@@ -313,6 +313,16 @@ s3: {
     src: "secrets/**"
   },
 
+  //upload the public/ folder with a custom Cache-control header
+  longTym: {
+    options: {
+      headers: {
+        CacheControl: 'max-age=900, public, must-revalidate'
+      }
+    }
+    src: "public/**"
+  },
+
   //upload the public/ folder with a 2 year cache time
   longTym: {
     options: {
@@ -322,6 +332,7 @@ s3: {
     }
     src: "public/**"
   },
+  
   //upload the public/ folder with a specific expiry date
   beryLongTym: {
     options: {
