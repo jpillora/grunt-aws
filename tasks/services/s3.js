@@ -25,6 +25,7 @@ module.exports = function(grunt) {
     cache: true,
     overwrite: true,
     createBucket: false,
+    allowWebHostingOverWrite: false,
     enableWeb: false,
     signatureVersion: 'v4'
   };
@@ -213,7 +214,7 @@ module.exports = function(grunt) {
 
     function enableWebHosting(callback) {
       S3.getBucketWebsite({ Bucket:opts.bucket }, function(err){
-        if (err && err.name === 'NoSuchWebsiteConfiguration'){
+        if ((err && err.name === 'NoSuchWebsiteConfiguration') || opts.allowWebHostingOverWrite){
           //opts.enableWeb can be the params for WebsiteRedirectLocation.
           //Otherwise, just set the index.html as default suffix
           grunt.log.writeln('Enabling website configuration on ' + opts.bucket + '...');
