@@ -25,7 +25,9 @@ module.exports = function(grunt) {
     cache: true,
     overwrite: true,
     createBucket: false,
+    allowWebHostingOverWrite: false,
     enableWeb: false,
+    runWithoutFiles: false,
     signatureVersion: 'v4'
   };
 
@@ -48,13 +50,15 @@ module.exports = function(grunt) {
       return !grunt.file.isDir(file.src);
     });
 
-    if(!files.length)
+    //get options
+    var opts = this.options(DEFAULTS);
+
+    if(!files.length && !opts.runWithoutFiles){
       return grunt.log.ok("No files matched");
+    }
 
     //mark as async
     var done = this.async();
-    //get options
-    var opts = this.options(DEFAULTS);
 
     //checks
     if(!opts.bucket)
@@ -169,7 +173,8 @@ module.exports = function(grunt) {
     if(!opts.cache)
       subtasks.push(getFileList);
 
-    subtasks.push(copyAllFiles);
+    if(files.length)
+      subtasks.push(copyAllFiles);
 
     //start!
     async.series(subtasks, taskComplete);
@@ -213,7 +218,7 @@ module.exports = function(grunt) {
 
     function enableWebHosting(callback) {
       S3.getBucketWebsite({ Bucket:opts.bucket }, function(err){
-        if (err && err.name === 'NoSuchWebsiteConfiguration'){
+        if ((err && err.name === 'NoSuchWebsiteConfiguration') || opts.allowWebHostingOverWrite){
           //opts.enableWeb can be the params for WebsiteRedirectLocation.
           //Otherwise, just set the index.html as default suffix
           grunt.log.writeln('Enabling website configuration on ' + opts.bucket + '...');

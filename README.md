@@ -96,6 +96,12 @@ Default `3`
 
 Number of retries for a request
 
+#### `allowWebHostingOverWrite` (Boolean)
+
+Default `false`
+
+Allows task to overwrite existing web hosting settings
+
 #### `access` (String)
 
 Default `"public-read"`
