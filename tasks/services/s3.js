@@ -48,9 +48,6 @@ module.exports = function(grunt) {
       return !grunt.file.isDir(file.src);
     });
 
-    if(!files.length)
-      return grunt.log.ok("No files matched");
-
     //mark as async
     var done = this.async();
     //get options
@@ -166,10 +163,11 @@ module.exports = function(grunt) {
     if(opts.enableWeb)
       subtasks.push(enableWebHosting);
 
-    if(!opts.cache)
+    if(!opts.cache && files.length)
       subtasks.push(getFileList);
 
-    subtasks.push(copyAllFiles);
+    if(files.length)
+      subtasks.push(copyAllFiles);
 
     //start!
     async.series(subtasks, taskComplete);
