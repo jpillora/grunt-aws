@@ -26,6 +26,7 @@ module.exports = function(grunt) {
     overwrite: true,
     createBucket: false,
     enableWeb: false,
+    runWithoutFiles: false,
     signatureVersion: 'v4'
   };
 
@@ -48,13 +49,15 @@ module.exports = function(grunt) {
       return !grunt.file.isDir(file.src);
     });
 
-    if(!files.length)
+    //get options
+    var opts = this.options(DEFAULTS);
+
+    if(!files.length && !opts.runWithoutFiles){
       return grunt.log.ok("No files matched");
+    }
 
     //mark as async
     var done = this.async();
-    //get options
-    var opts = this.options(DEFAULTS);
 
     //checks
     if(!opts.bucket)
@@ -169,7 +172,8 @@ module.exports = function(grunt) {
     if(!opts.cache)
       subtasks.push(getFileList);
 
-    subtasks.push(copyAllFiles);
+    if(files.length)
+      subtasks.push(copyAllFiles);
 
     //start!
     async.series(subtasks, taskComplete);
