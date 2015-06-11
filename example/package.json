@@ -1,5 +1,8 @@
 {
   "dependencies": {
     "grunt": "~0.4.1"
+  },
+  "devDependencies": {
+    "grunt-aws": "file:../"
   }
 }

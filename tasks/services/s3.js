@@ -32,15 +32,22 @@ module.exports = function(grunt) {
   //s3 task
   grunt.registerMultiTask("s3", DESC, function() {
 
+    //get options
+    var opts = this.options(DEFAULTS);
+
     //normalize files array (force expand)
     var files = [];
     this.files.forEach(function(file) {
-      var cwd = file.cwd || '';
-      files = files.concat(file.src.map(function(src) {
-        var s = path.join(cwd, src),
-            d = (cwd||file.src.length>1) ? ((file.dest||'')+src) : file.dest || src;
-        return {src: s, dest: d};
-      }));
+        var cwd = file.cwd || '';
+        files = files.concat(file.src
+          .filter(function(src) {
+            return opts.exclude && opts.exclude.indexOf(src) != -1;
+          })
+          .map(function(src) {
+            var s = path.join(cwd, src),
+              d = (cwd || file.src.length > 1) ? ((file.dest || '') + src) : file.dest || src;
+            return {src: s, dest: d};
+          }));
     });
 
     //skip directories since there are only files on s3
@@ -50,8 +57,6 @@ module.exports = function(grunt) {
 
     //mark as async
     var done = this.async();
-    //get options
-    var opts = this.options(DEFAULTS);
 
     //checks
     if(!opts.bucket)
