@@ -41,7 +41,7 @@ module.exports = function(grunt) {
         var cwd = file.cwd || '';
         files = files.concat(file.src
           .filter(function(src) {
-            return opts.exclude && opts.exclude.indexOf(src) != -1;
+            return opts.exclude && opts.exclude.indexOf(src) == -1;
           })
           .map(function(src) {
             var s = path.join(cwd, src),
