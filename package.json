@@ -30,6 +30,7 @@
     "amazon",
     "aws",
     "s3",
+    "cloudfront",
     "cache",
     "caching",
     "gzip",
