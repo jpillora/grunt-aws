@@ -2,6 +2,8 @@
 
 A Grunt interface into the Amazon Web Services Node.JS SDK `aws-sdk`
 
+[![NPM version](https://nodei.co/npm/grunt-aws.png?compact=true)](https://npmjs.org/package/grunt-aws)
+
 ## Getting Started
 This plugin requires Grunt `0.4.x`
 
@@ -19,13 +21,18 @@ grunt.loadNpmTasks('grunt-aws');
 
 -----
 
-*Note:*
+### Supported Services
 
 This plugin aims to provide a task for each service on AWS.
-Currently however, only the Simple Storage Service `"s3"` and Route 53 `"route53"` tasks have been implemented.
+Currently however, it only supports:
+
+* [Simple Storage Service `"s3"`](#the-s3-task)
+* [Route 53 `"route53"`](#the-route53-task)
+* [CloudFront `"cloudfront"`](#the-cloudfront-task)
+
+-----
 
 ## The "s3" task
-
 
 ### Features
 
@@ -120,13 +127,19 @@ Performs a preview run displaying what would be modified
 
 Default `20`
 
-Number of S3 operations that may be performed concurrently 
+Number of S3 operations that may be performed concurrently
+
+#### `overwrite` (Boolean)
+
+Default `true`
+
+Upload files, whether or not they already exist (set to `false` if you never update existing files).
 
 #### `cache` (Boolean)
 
 Default `true`
 
-Don't upload files that already exist (same ETag). Each target has it's
+Skip uploading files which have already been uploaded (same ETag). Each target has it's
 own options cache, so if you change the options object, files
 will be forced to reupload.
 
@@ -149,7 +162,7 @@ The following are allowed:
 * `ContentType` (will override mime type lookups)
 * `ContentDisposition`
 * `ContentEncoding`
-* `CacheControl` (converts numbers into strings as `max-age=<num>, public`)
+* `CacheControl` (accepts a string or converts numbers into header as `max-age=<num>, public`)
 * `Expires` (converts dates to strings with `toUTCString()`)
 * `GrantFullControl`
 * `GrantRead`
@@ -174,6 +187,10 @@ Set **custom** HTTP headers
 All custom headers will be prefixed with `x-amz-meta-`.
 For example `{Foo:"42"}` becomes `x-amz-meta-foo:42`.
 
+#### `charset` (String)
+
+Add a charset to your `Content-Type`. For example: `utf-8`.
+
 #### `mime` (Object)
 
 Define your own mime types
@@ -197,9 +214,6 @@ Create the bucket if it does not exist. Use the `bucket` option to name the buck
 Default `false`
 
 Configure static web hosting for the bucket. Set to `true` to enable the default hosting with the `IndexDocument` set to `index.html`. Otherwise, set the value to be an object that matches the parameters required for `WebsiteConfiguration` in [putBucketWebsite docs](http://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/S3.html#putBucketWebsite-property).
-
-
----
 
 ### Caching
 
@@ -229,8 +243,6 @@ Running "s3:uat" (s3) task
 >> No change 'public/vendor/verify.notify.js'
 >> Put 0 files
 ```
-
----
 
 ### Explained Examples
 
@@ -301,6 +313,16 @@ s3: {
     src: "secrets/**"
   },
 
+  //upload the public/ folder with a custom Cache-control header
+  longTym: {
+    options: {
+      headers: {
+        CacheControl: 'max-age=900, public, must-revalidate'
+      }
+    }
+    src: "public/**"
+  },
+
   //upload the public/ folder with a 2 year cache time
   longTym: {
     options: {
@@ -310,6 +332,7 @@ s3: {
     }
     src: "public/**"
   },
+  
   //upload the public/ folder with a specific expiry date
   beryLongTym: {
     options: {
@@ -330,6 +353,8 @@ s3: {
 
 * Download operation
 * Delete unmatched files
+
+---
 
 ## The "route53" task
 
@@ -416,16 +441,20 @@ Cache data returned from Route 53. Once records
 * Better support for alias records
 * Create zones?
 
+---
 
 ## The "cloudfront" task
 
 ### Features
 
-* Invalidate a list of files, up to the maximum allowed by CloudFront
+* Invalidate a list of files, up to the maximum allowed by CloudFront, like `/index.html` and `/pages/whatever.html`
+* Update CustomErrorResponses
+* Update OriginPath on the first origin in the distribution, other origins will stay the same
+* Update DefaultRootObject
 
 ### Usage
 
-To invalidate the files `/index.html` and `/pages/whatever.html`
+A sample configuration is below. Each property must follow the requirements from the [CloudFront updateDistribution Docs](http://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/CloudFront.html#updateDistribution-property).
 
 ```js
   grunt.initConfig({
@@ -435,10 +464,22 @@ To invalidate the files `/index.html` and `/pages/whatever.html`
         accessKeyId: "<%= aws.accessKeyId %>",
         secretAccessKey: "<%= aws.secretAccessKey %>",
         distributionId: '...',
-        invalidations: [
-          '/index.html',
-          '/pages/whatever.html'
-        ]
+      },
+      html: {
+        options: {
+          invalidations: [
+            '/index.html',
+            '/pages/whatever.html'
+          ],
+          customErrorResponses: [ {
+            ErrorCode: 0,
+            ErrorCachingMinTTL: 0,
+            ResponseCode: 'STRING_VALUE',
+            ResponsePagePath: 'STRING_VALUE'
+          } ],
+          originPath: 'STRING_VALUE',
+          defaultRootObject: 'STRING_VALUE'
+        }
       }
     }
   });
@@ -458,9 +499,23 @@ Amazon secret access key
 
 The CloudFront Distribution ID to be acted on
 
-#### `invalidations` *required* (Array)
+#### `invalidations` *optional* (Array)
 
 An array of strings that are each a root relative path to a file to be invalidated
+
+#### `customErrorResponses` *optional* (Array)
+
+An array of objects with the properties shown above
+
+#### `originPath` *optional* (String)
+
+A string to set the origin path for the first origin in the distribution
+
+#### `defaultRootObject` *optional* (String)
+
+A string to set the default root object for the distribution
+
+
 
 
 ### References
