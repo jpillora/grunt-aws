@@ -447,11 +447,14 @@ Cache data returned from Route 53. Once records
 
 ### Features
 
-* Invalidate a list of files, up to the maximum allowed by CloudFront
+* Invalidate a list of files, up to the maximum allowed by CloudFront, like `/index.html` and `/pages/whatever.html`
+* Update CustomErrorResponses
+* Update OriginPath on the first origin in the distribution, other origins will stay the same
+* Update DefaultRootObject
 
 ### Usage
 
-To invalidate the files `/index.html` and `/pages/whatever.html`
+A sample configuration is below. Each property must follow the requirements from the [CloudFront updateDistribution Docs](http://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/CloudFront.html#updateDistribution-property).
 
 ```js
   grunt.initConfig({
@@ -467,7 +470,15 @@ To invalidate the files `/index.html` and `/pages/whatever.html`
           invalidations: [
             '/index.html',
             '/pages/whatever.html'
-          ]
+          ],
+          customErrorResponses: [ {
+            ErrorCode: 0,
+            ErrorCachingMinTTL: 0,
+            ResponseCode: 'STRING_VALUE',
+            ResponsePagePath: 'STRING_VALUE'
+          } ],
+          originPath: 'STRING_VALUE',
+          defaultRootObject: 'STRING_VALUE'
         }
       }
     }
@@ -488,9 +499,23 @@ Amazon secret access key
 
 The CloudFront Distribution ID to be acted on
 
-#### `invalidations` *required* (Array)
+#### `invalidations` *optional* (Array)
 
 An array of strings that are each a root relative path to a file to be invalidated
+
+#### `customErrorResponses` *optional* (Array)
+
+An array of objects with the properties shown above
+
+#### `originPath` *optional* (String)
+
+A string to set the origin path for the first origin in the distribution
+
+#### `defaultRootObject` *optional* (String)
+
+A string to set the default root object for the distribution
+
+
 
 
 ### References
