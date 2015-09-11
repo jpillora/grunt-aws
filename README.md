@@ -193,7 +193,7 @@ For example `{Foo:"42"}` becomes `x-amz-meta-foo:42`.
 
 #### `charset` (String)
 
-Add a charset to your `Content-Type`. For example: `utf-8`.
+Add a charset to every one of your `Content-Type`. For example: `utf-8`. If this is not set, then all text files will get charset of UTF-8 by default.
 
 #### `mime` (Object)
 
