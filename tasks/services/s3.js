@@ -29,6 +29,9 @@ module.exports = function(grunt) {
     signatureVersion: 'v4'
   };
 
+  //Action taking place.
+  var action = "Put"
+
   //s3 task
   grunt.registerMultiTask("s3", DESC, function() {
 
@@ -348,7 +351,7 @@ module.exports = function(grunt) {
       //extend the base object
       var object = Object.create(baseObject);
       object.Key = dest;
-      object.Body = contents;
+
       if(!object.ContentType)
         object.ContentType = mime.lookup(dest);
 
@@ -356,14 +359,29 @@ module.exports = function(grunt) {
       var charset = mime.charsets.lookup(object.ContentType, '') || opts.charset;
       if (charset) object.ContentType += '; charset=' + charset;
 
-      //upload!
-      S3.putObject(object, putComplete);
+      if (opts.copyFrom || opts.copyFile) {
+        if (opts.copyFrom) {
+          var copySource = src.split('/');
+          copySource[0] =  opts.copyFrom;
+          copySource = copySource.join('/');
+        } else {
+          copySource = opts.copyFile;
+        }
+        object.MetadataDirective  = "REPLACE";
+        object.CopySource = copySource;
+        action = "Copy";
+        S3.copyObject(object, putComplete)
+      } else {
+        //upload!
+        object.Body = contents;
+        S3.putObject(object, putComplete);
+      }
 
       function putComplete(err, results) {
         if(err) {
           return callback("Put '" + dest + "' failed...\n" + err + "\n ");
         }
-        grunt.log.ok(DRYRUN + "Put '" + dest + "'");
+        grunt.log.ok(DRYRUN + action + " '" + dest + "'");
         if(!opts.dryRun)
           stats.puts++;
         if(results)
@@ -380,7 +398,7 @@ module.exports = function(grunt) {
       }
 
       //all done
-      grunt.log.ok("Put " + stats.puts + " files");
+      grunt.log.ok(action + " " + stats.puts + " files");
       if(opts.cache && (stats.puts || stats.dels || stats.refreshed || stats.newOptions))
         CacheMgr.put(cache);
       done(err);
