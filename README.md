@@ -29,6 +29,7 @@ Currently however, it only supports:
 * [Simple Storage Service `"s3"`](#the-s3-task)
 * [Route 53 `"route53"`](#the-route53-task)
 * [CloudFront `"cloudfront"`](#the-cloudfront-task)
+* [SNS `"sns"`](#the-sns-task)
 
 -----
 
@@ -346,7 +347,7 @@ s3: {
     }
     src: "public/**"
   },
-  
+
   //upload the public/ folder with a specific expiry date
   beryLongTym: {
     options: {
@@ -356,7 +357,7 @@ s3: {
     }
     src: "public/**"
   },
-  
+
   //Copy file directly from s3 bucket to a different bucket
   copyFile: {
     src: "build/c.txt",
@@ -547,13 +548,67 @@ A string to set the origin path for the first origin in the distribution
 
 A string to set the default root object for the distribution
 
+## The "sns" task
 
+### Features
 
+* Publish to a SNS topic
+
+### Usage
+
+To public a message
+
+```js
+  grunt.initConfig({
+    aws: grunt.file.readJSON("credentials.json"),
+    cloudfront: {
+      options: {
+        accessKeyId: "<%= aws.accessKeyId %>",
+        secretAccessKey: "<%= aws.secretAccessKey %>",
+        region: '<%= aws.region %>',
+        target: 'AWS:ARN:XXXX:XXXX:XXXX',
+        message: 'You got it',
+        subject: 'A Notification'
+      }
+    }
+  });
+```
+
+### Options
+
+#### `accessKeyId` *required* (String)
+
+Amazon access key id
+
+#### `secretAccessKey` *required* (String)
+
+Amazon secret access key
+
+#### `region` *required* (String)
+
+The region that the Topic is hosted under
+
+#### `target` *required* (String)
+
+The AWS ARN for the topic
+
+#### `message` *required* (String)
+
+The message content for the notification
+
+#### `subject` *required* (String)
+
+The subject to use for the notification
 
 ### References
 
-* [CloudFront AWS SDK API Docs](http://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/CloudFront.html)
+* [SNS AWS SDK API Docs](http://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/SNS.html)
 
+### Todo
+
+* Add other SNS functionality
+
+---
 
 #### MIT License
 
