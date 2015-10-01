@@ -179,6 +179,12 @@ module.exports = function(grunt) {
     //------------------------------------------------
 
     function createBucket(callback) {
+      var params = {
+        Bucket: opts.bucket,
+        ACL: opts.access
+      };
+      if (opts.region && opts.region !== 'us-east-1')
+          params.CreateBucketConfiguration = { LocationConstraint: opts.region };
       //check the bucket doesn't exist first
       S3.listBuckets(function(err, data){
         if(err) {
@@ -195,11 +201,7 @@ module.exports = function(grunt) {
           grunt.log.writeln('Creating bucket ' + opts.bucket + '...');
           //create the bucket using the bucket, access and region options
           if (opts.dryRun) return callback();
-          S3.createBucket({
-            Bucket: opts.bucket,
-            ACL: opts.access,
-            CreateBucketConfiguration: { LocationConstraint: opts.region }
-          }, function(err, data){
+          S3.createBucket(params, function(err, data){
             if(err) {
               err.message = 'createBucket:S3.listBuckets:S3.createBucket: ' + err.message;
               return callback(err);
