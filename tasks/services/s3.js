@@ -29,6 +29,9 @@ module.exports = function(grunt) {
     signatureVersion: 'v4'
   };
 
+  //Action taking place.
+  var action = "Put"
+
   //s3 task
   grunt.registerMultiTask("s3", DESC, function() {
 
@@ -67,6 +70,7 @@ module.exports = function(grunt) {
     AWS.config.update(_.pick(opts,
       'accessKeyId',
       'secretAccessKey',
+      'sessionToken',
       'region',
       'sslEnabled',
       'maxRetries',
@@ -175,6 +179,12 @@ module.exports = function(grunt) {
     //------------------------------------------------
 
     function createBucket(callback) {
+      var params = {
+        Bucket: opts.bucket,
+        ACL: opts.access
+      };
+      if (opts.region && opts.region !== 'us-east-1')
+          params.CreateBucketConfiguration = { LocationConstraint: opts.region };
       //check the bucket doesn't exist first
       S3.listBuckets(function(err, data){
         if(err) {
@@ -191,11 +201,7 @@ module.exports = function(grunt) {
           grunt.log.writeln('Creating bucket ' + opts.bucket + '...');
           //create the bucket using the bucket, access and region options
           if (opts.dryRun) return callback();
-          S3.createBucket({
-            Bucket: opts.bucket,
-            ACL: opts.access,
-            CreateBucketConfiguration: { LocationConstraint: opts.region }
-          }, function(err, data){
+          S3.createBucket(params, function(err, data){
             if(err) {
               err.message = 'createBucket:S3.listBuckets:S3.createBucket: ' + err.message;
               return callback(err);
@@ -347,25 +353,47 @@ module.exports = function(grunt) {
       //extend the base object
       var object = Object.create(baseObject);
       object.Key = dest;
-      object.Body = contents;
+
       if(!object.ContentType)
         object.ContentType = mime.lookup(dest);
 
-      // Set a default charset
-      if (opts.charset) object.ContentType += '; charset=' + opts.charset;
+      // Set the charset, default text type mime types to UTF-8
+      var charset = mime.charsets.lookup(object.ContentType, '') || opts.charset;
+      if (charset) object.ContentType += '; charset=' + charset;
 
-      //upload!
-      S3.putObject(object, putComplete);
+      if (opts.copyFrom || opts.copyFile) {
+        if (opts.copyFrom) {
+          var copySource = src.split('/');
+          copySource[0] =  opts.copyFrom;
+          copySource = copySource.join('/');
+        } else {
+          copySource = opts.copyFile;
+        }
+        object.MetadataDirective  = "REPLACE";
+        object.CopySource = copySource;
+        action = "Copy";
+        S3.copyObject(object, putComplete)
+      } else {
+        //upload!
+        object.Body = contents;
+        S3.putObject(object, putComplete);
+      }
 
       function putComplete(err, results) {
         if(err) {
           return callback("Put '" + dest + "' failed...\n" + err + "\n ");
         }
-        grunt.log.ok(DRYRUN + "Put '" + dest + "'");
+        grunt.log.ok(DRYRUN + action + " '" + dest + "'");
         if(!opts.dryRun)
           stats.puts++;
         if(results)
           cache.files[dest] = JSON.parse(results.ETag);
+
+        if(stats.puts % 5 == 0) {
+          // Periodically update the cache
+          CacheMgr.put(cache);
+        }
+
         callback();
       }
 
@@ -378,7 +406,7 @@ module.exports = function(grunt) {
       }
 
       //all done
-      grunt.log.ok("Put " + stats.puts + " files");
+      grunt.log.ok(action + " " + stats.puts + " files");
       if(opts.cache && (stats.puts || stats.dels || stats.refreshed || stats.newOptions))
         CacheMgr.put(cache);
       done(err);
