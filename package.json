@@ -20,7 +20,7 @@
     "url": "https://github.com/jpillora/grunt-aws/issues"
   },
   "licenses": "MIT",
-  "main": "Gruntfile.js",
+  "main": "tasks/aws.js",
   "peerDependencies": {
     "grunt": ">=0.4.0"
   },
