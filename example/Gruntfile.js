@@ -11,7 +11,8 @@ module.exports = function(grunt) {
       options: {
         accessKeyId: "<%= aws.accessKeyId %>",
         secretAccessKey: "<%= aws.secretAccessKey %>",
-        bucket: "..."
+        bucket: "...",
+        exclude: "dirty.js"
       },
       build: {
         cwd: "build",
