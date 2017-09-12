@@ -26,11 +26,12 @@ module.exports = function(grunt) {
     overwrite: true,
     createBucket: false,
     enableWeb: false,
-    signatureVersion: 'v4'
+    signatureVersion: 'v4',
+    assumeRole: false
   };
 
   //Action taking place.
-  var action = "Put"
+  var action = "Put";
 
   //s3 task
   grunt.registerMultiTask("s3", DESC, function() {
@@ -68,14 +69,19 @@ module.exports = function(grunt) {
 
     //whitelist allowed keys
     AWS.config.update(_.pick(opts,
-      'accessKeyId',
-      'secretAccessKey',
       'sessionToken',
       'region',
       'sslEnabled',
       'maxRetries',
       'httpOptions'
     ), true);
+
+    if (opts.assumeRole !== true) {
+      AWS.config.update(_.pick(opts,
+        'accessKeyId',
+        'secretAccessKey'
+      ));
+    }
 
     //s3 client
     var S3 = new AWS.S3({signatureVersion: opts.signatureVersion});
