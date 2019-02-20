@@ -27,13 +27,13 @@ module.exports = function(grunt) {
       'accessKeyId',
       'secretAccessKey'
     ), true);
- 
+
     //cloudfront client
     var cloudfront = new AWS.CloudFront();
 
     var subtasks = [];
-    subtasks.push(createInvalidations);
     subtasks.push(createUpdates);
+    subtasks.push(createInvalidations);
     async.series(subtasks, done);
 
     //------------------------------------------------
