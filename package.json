@@ -1,7 +1,7 @@
 {
   "name": "grunt-aws",
   "description": "A Grunt interface into the Amazon Node.JS SDK",
-  "version": "0.6.2",
+  "version": "0.7.0",
   "homepage": "https://github.com/jpillora/grunt-aws",
   "author": {
     "name": "Jaime Pillora",
@@ -39,7 +39,7 @@
   "dependencies": {
     "async": "~0.2.9",
     "aws-sdk": "^2.1.50",
-    "lodash": "~1.3.1",
-    "mime": "~1.2.11"
+    "lodash": "^4.17.11",
+    "mime": "^2.4.0"
   }
 }
