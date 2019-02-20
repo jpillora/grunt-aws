@@ -433,6 +433,10 @@ Amazon access key id
 
 Amazon secret access key
 
+#### `assumeRole` (Boolean)
+
+Use AWS IAM Role instead of credentials
+
 #### `zones` *required* (Object)
 
 An object containing names of zones and a list of DNS records to be created for this zone in Route 53.
