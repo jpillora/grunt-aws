@@ -122,7 +122,7 @@ module.exports = function(grunt) {
         var recordsToCreate = _.select(records, function(record) {
           //check for any Route53 record matching this record's name (with period on the end)
           var checkForName = (record.name || record.Name) + '.';
-          return !_.detect(data.ResourceRecordSets, function(route53RecordData) {
+          return !_.find(data.ResourceRecordSets, function(route53RecordData) {
             return route53RecordData.Name === checkForName;
           });
         });
