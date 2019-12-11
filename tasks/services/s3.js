@@ -197,7 +197,7 @@ module.exports = function(grunt) {
           err.message = 'createBucket:S3.listBuckets: ' + err.message;
           return callback(err);
         }
-        var existingBucket = _.detect(data.Buckets, function(bucket){
+        var existingBucket = _.find(data.Buckets, function(bucket){
           return opts.bucket === bucket.Name;
         });
         if(existingBucket){
